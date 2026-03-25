@@ -29,158 +29,169 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <div class="find-car-page">
-    <header class="orange-header">
-      <button class="back-button" @click="$emit('back')">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15 18L9 12L15 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-      <h1 class="header-title">{{ langState.t('ค้นหารถในฝัน', 'Find Dream Car') }}</h1>
-    </header>
+  <div class="find-car-absolute-wrapper">
+    <div class="find-car-content">
+      <!-- Navbar -->
+      <header class="navbar">
+        <button class="icon-btn back-btn" @click="$emit('back')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="greeting">
+          <span class="greeting-main">{{ langState.t('ค้นหารถในฝัน', 'Find Dream Car') }}</span>
+        </div>
+        <div class="empty-space"></div>
+      </header>
 
-    <div class="content">
-      <div class="form-group">
-        <label class="label">{{ langState.t('เลือกรถยนต์', 'Select Car') }}</label>
-        <div class="select-wrapper">
-          <select v-model="selectedCar" class="custom-select">
-            <option value="BMW M3 Touring LCI">BMW M3 Touring LCI</option>
-            <option value="Honda Civic RS">Honda Civic RS</option>
-          </select>
-          <div class="select-arrows">
-            <svg width="10" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7 10l5-5 5 5h-10zm0 4l5 5 5-5h-10z" fill="#666"/>
-            </svg>
+      <div class="page-body">
+        <div class="main-grid">
+          <!-- Car Preview Section -->
+          <div class="car-preview-section">
+            <div class="car-image-box">
+              <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Car" class="car-image" />
+              <div class="car-overlay">
+                <h2 class="car-name">2015 BMW 528i 2.0 f10 (ปี10-16) Luxury Sedan</h2>
+                <p class="car-tags">#BMW #528i #luxury</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Section -->
+          <div class="form-section">
+            <div class="glass-card">
+              <h3 class="card-heading">{{ langState.t('รายละเอียดการจอง', 'Booking Details') }}</h3>
+              
+              <div class="form-group">
+                <label class="label">{{ langState.t('เลือกรถยนต์', 'Select Car') }}</label>
+                <div class="select-wrapper">
+                  <select v-model="selectedCar" class="custom-select">
+                    <option value="BMW M3 Touring LCI">BMW M3 Touring LCI</option>
+                    <option value="Honda Civic RS">Honda Civic RS</option>
+                  </select>
+                  <div class="select-arrows">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dealer-section">
+                <label class="label">{{ langState.t('รายชื่อดีลเลอร์', 'Dealer list') }}</label>
+                <div class="dealer-list-grid">
+                  <div 
+                    v-for="dealer in dealers" 
+                    :key="dealer.id"
+                    class="dealer-item"
+                    :class="{ 'selected': selectedDealer === dealer.id }"
+                    @click="selectedDealer = dealer.id"
+                  >
+                    <div class="radio-outer">
+                      <div class="radio-inner" v-if="selectedDealer === dealer.id"></div>
+                    </div>
+                    <div class="dealer-info">
+                      <div class="dealer-name">{{ dealer.name }}</div>
+                      <div class="dealer-code">{{ dealer.code }} • {{ dealer.phone }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn-clear" @click="handleClear">{{ langState.t('ล้างข้อมูล', 'Clear') }}</button>
+              <button class="btn-submit" @click="handleSubmit">{{ langState.t('ยืนยัน', 'Submit') }}</button>
+            </div>
           </div>
         </div>
       </div>
-
-      <div class="car-preview">
-        <!-- Placeholder image or realistic URL. Let's use an unsplash or generic car URL if possible, or just a gray box with "Car Image" -->
-        <div class="car-image-box">
-          <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" alt="Car" class="car-image" />
-        </div>
-        <h2 class="car-name">2015 BMW 528i 2.0 f10 (ปี10-16) Luxury Sedan</h2>
-        <p class="car-tags">#BMW #528i luxury (Facelift)</p>
-      </div>
-
-      <div class="dealer-section">
-        <label class="label">{{ langState.t('รายชื่อดีลเลอร์', 'Dealer list') }}</label>
-        <div class="dealer-list-card">
-          <div 
-            v-for="dealer in dealers" 
-            :key="dealer.id"
-            class="dealer-item"
-            @click="selectedDealer = dealer.id"
-          >
-            <div class="radio-outer" :class="{ 'selected': selectedDealer === dealer.id }">
-              <div class="radio-inner" v-if="selectedDealer === dealer.id"></div>
-            </div>
-            <div class="dealer-info">
-              <div class="dealer-name">{{ dealer.name }}</div>
-              <div class="dealer-code">{{ dealer.code }} / {{ dealer.phone }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="action-buttons">
-      <button class="btn-submit" @click="handleSubmit">{{ langState.t('ยืนยัน', 'Submit') }}</button>
-      <button class="btn-clear" @click="handleClear">{{ langState.t('ล้างข้อมูล', 'Clear') }}</button>
     </div>
   </div>
 </template>
 
 <style scoped>
-.find-car-page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #ffffff;
-  max-width: 480px;
-  margin: 0 auto;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.orange-header {
-  background-color: #f97316;
-  color: white;
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  position: sticky;
+.find-car-absolute-wrapper {
+  position: fixed;
   top: 0;
-  z-index: 10;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f4f7fc;
+  z-index: 50;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-.back-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
+.find-car-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px 80px 32px;
+}
+
+/* Navbar */
+.navbar {
   display: flex;
   align-items: center;
-  margin-right: 16px;
-}
-
-.header-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.content {
-  padding: 24px;
-  flex: 1;
-}
-
-.form-group {
+  justify-content: space-between;
+  padding: 32px 0;
   margin-bottom: 24px;
 }
 
-.label {
-  display: block;
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 8px;
-  font-weight: 600;
+.icon-btn {
+  width: 52px;
+  height: 52px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.select-wrapper {
-  position: relative;
+@media (hover: hover) {
+  .icon-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
 }
 
-.custom-select {
+.empty-space {
+  width: 52px;
+}
+
+.greeting-main {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* Page Body */
+.page-body {
   width: 100%;
-  padding: 12px 36px 12px 16px;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  appearance: none;
-  background-color: white;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
 }
 
-.select-arrows {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
 }
 
-.car-preview {
-  margin-bottom: 32px;
-}
-
+/* Car Preview */
 .car-image-box {
   width: 100%;
-  height: 180px;
-  border-radius: 8px;
+  height: 480px;
+  border-radius: 28px;
   overflow: hidden;
-  margin-bottom: 12px;
-  background-color: #e0e0e0;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
 }
 
 .car-image {
@@ -189,68 +200,153 @@ const handleSubmit = () => {
   object-fit: cover;
 }
 
+.car-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 40px 32px 32px;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, transparent 100%);
+  color: white;
+}
+
 .car-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: #222;
-  margin: 0 0 4px 0;
-  line-height: 1.4;
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0 0 12px 0;
+  line-height: 1.3;
 }
 
 .car-tags {
-  font-size: 11px;
-  font-weight: 600;
-  color: #666;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
   margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
-.dealer-section {
+/* Form Section */
+.glass-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  margin-bottom: 24px;
+}
+
+.card-heading {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 32px 0;
+}
+
+.form-group {
   margin-bottom: 32px;
 }
 
-.dealer-list-card {
-  background-color: white;
+.label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 12px;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.custom-select {
+  width: 100%;
+  padding: 16px 48px 16px 20px;
+  border: 2px solid #e2e8f0;
   border-radius: 16px;
-  padding: 8px 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-  border: 1px solid #eee;
+  appearance: none;
+  background-color: #f8fafc;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+.custom-select:focus {
+  outline: none;
+  border-color: #f97316;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+}
+
+.select-arrows {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #94a3b8;
+}
+
+/* Dealer List */
+.dealer-section {
+  margin-bottom: 8px;
+}
+
+.dealer-list-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
 .dealer-item {
   display: flex;
   align-items: center;
-  padding: 16px 0;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 20px 24px;
+  background-color: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.dealer-item:last-child {
-  border-bottom: none;
+@media (hover: hover) {
+  .dealer-item:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+  }
+}
+
+.dealer-item.selected {
+  background-color: #fffaf5;
+  border-color: #f97316;
 }
 
 .radio-outer {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 2px solid #ccc;
+  border: 2px solid #cbd5e1;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 16px;
+  margin-right: 20px;
   flex-shrink: 0;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
+  background-color: #ffffff;
 }
 
-.radio-outer.selected {
-  border-color: #22c55e;
-  border-width: 2px;
+.dealer-item.selected .radio-outer {
+  border-color: #f97316;
+  background-color: #f97316;
 }
 
 .radio-inner {
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background-color: #22c55e;
+  background-color: #ffffff;
 }
 
 .dealer-info {
@@ -259,45 +355,180 @@ const handleSubmit = () => {
 }
 
 .dealer-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 6px;
 }
 
 .dealer-code {
-  font-size: 11px;
-  color: #888;
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
 }
 
+/* Action Buttons */
 .action-buttons {
   display: flex;
   gap: 16px;
-  padding: 16px 24px 32px;
-  background-color: #ffffff;
 }
 
 .btn-submit, .btn-clear {
   flex: 1;
-  padding: 14px;
+  padding: 18px;
   border: none;
-  border-radius: 24px;
+  border-radius: 99px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  color: white;
-  transition: opacity 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-submit {
   background-color: #f97316;
+  color: #ffffff;
+  box-shadow: 0 8px 16px rgba(249, 115, 22, 0.25);
 }
 
 .btn-clear {
-  background-color: #6b7280;
+  background-color: #e2e8f0;
+  color: #475569;
 }
 
-.btn-submit:hover, .btn-clear:hover {
-  opacity: 0.9;
+@media (hover: hover) {
+  .btn-submit:hover {
+    background-color: #ea580c;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(249, 115, 22, 0.35);
+  }
+  
+  .btn-clear:hover {
+    background-color: #cbd5e1;
+    color: #0f172a;
+  }
+}
+
+/* Responsive constraints */
+@media (max-width: 992px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  
+  .car-image-box {
+    height: 360px;
+  }
+}
+
+@media (max-width: 768px) {
+  .find-car-absolute-wrapper {
+    position: absolute;
+    width: 100vw;
+  }
+  
+  .find-car-content {
+    padding: 0 16px 32px 16px;
+  }
+
+  .navbar {
+    padding: 16px 0;
+    margin-bottom: 12px;
+  }
+
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .empty-space {
+    width: 44px;
+  }
+
+  .greeting-main {
+    font-size: 18px;
+  }
+  
+  .car-image-box {
+    height: 260px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  
+  .car-overlay {
+    padding: 32px 24px 24px;
+  }
+  
+  .car-name {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  
+  .car-tags {
+    font-size: 13px;
+  }
+  
+  .glass-card {
+    padding: 24px 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .card-heading {
+    font-size: 20px;
+    margin-bottom: 24px;
+  }
+  
+  .form-group {
+    margin-bottom: 24px;
+  }
+  
+  .label {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  .custom-select {
+    padding: 14px 40px 14px 16px;
+    font-size: 15px;
+    border-radius: 14px;
+  }
+  
+  .dealer-list-grid {
+    gap: 12px;
+  }
+  
+  .dealer-item {
+    padding: 16px 16px;
+    border-radius: 16px;
+  }
+  
+  .radio-outer {
+    width: 20px;
+    height: 20px;
+    margin-right: 16px;
+  }
+  
+  .dealer-name {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  
+  .dealer-code {
+    font-size: 12px;
+  }
+  
+  .action-buttons {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  
+  .btn-submit, .btn-clear {
+    padding: 16px;
+    font-size: 16px;
+    width: 100%;
+  }
 }
 </style>

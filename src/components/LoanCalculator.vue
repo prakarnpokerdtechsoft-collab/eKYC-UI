@@ -83,113 +83,168 @@ const formatNumber = (num) => {
 </script>
 
 <template>
-  <div class="loan-calculator">
-    <header class="orange-header">
-      <button class="back-btn" @click="$emit('back')">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15 18L9 12L15 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
-      <h1 class="header-title">{{ langState.t('เครื่องคำนวณสินเชื่อ', 'Loan Calculator') }}</h1>
-    </header>
-
-    <div class="content">
-      <div class="tabs">
-        <button :class="['tab-btn', activeTab === 'Standard' ? 'active-standard' : 'inactive']" @click="activeTab = 'Standard'">
-          {{ langState.t('Standard', 'Standard') }}
+  <div class="calculator-absolute-wrapper">
+    <div class="calculator-content">
+      <!-- Navbar -->
+      <header class="navbar">
+        <button class="icon-btn back-btn" @click="$emit('back')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </button>
-        <button :class="['tab-btn', activeTab === 'AI' ? 'active-ai' : 'inactive']" @click="activeTab = 'AI'">
-          {{ langState.t('AI Calculator', 'AI Calculator') }}
-        </button>
-      </div>
+        <div class="greeting">
+          <span class="greeting-main">{{ langState.t('เครื่องคำนวณสินเชื่อ', 'Loan Calculator') }}</span>
+        </div>
+        <div class="empty-space"></div>
+      </header>
 
-      <div class="form-group">
-        <label>{{ langState.t('ราคารถ', 'Car Price') }}</label>
-        <input type="number" v-model="carPrice" placeholder="" />
-      </div>
+      <div class="page-body">
+        <!-- Tabs -->
+        <div class="tabs-container">
+          <div class="tabs-bg">
+            <button 
+              :class="['tab-btn', activeTab === 'Standard' ? 'active-tab' : 'inactive-tab']" 
+              @click="activeTab = 'Standard'"
+            >
+              {{ langState.t('Standard', 'Standard') }}
+            </button>
+            <button 
+              :class="['tab-btn', activeTab === 'AI' ? 'active-tab' : 'inactive-tab']" 
+              @click="activeTab = 'AI'"
+            >
+              {{ langState.t('AI Calculator', 'AI Calculator') }}
+            </button>
+          </div>
+        </div>
 
-      <div class="form-group">
-        <label>{{ langState.t('เงินดาวน์ (%)', 'Down Payment (%)') }}</label>
-        <input type="number" v-model="downPayment" placeholder="" />
-      </div>
+        <div class="main-grid">
+          <!-- Form Section -->
+          <div class="form-section">
+            <div class="glass-card">
+              <h3 class="card-heading">{{ langState.t('ข้อมูลสินเชื่อ', 'Loan Details') }}</h3>
+              
+              <div class="form-group">
+                <label class="label">{{ langState.t('ราคารถ', 'Car Price') }}</label>
+                <input type="number" v-model="carPrice" class="custom-input" placeholder="0" />
+              </div>
 
-      <!-- Order in AI tab image: Price, Down, Term, Interest, Service Fee, Other Service Fee -->
-      <div class="form-group">
-        <label>{{ langState.t('ระยะเวลาผ่อน (เดือน)', 'Loan Term (Months)') }}</label>
-        <select v-model="loanTerm">
-          <option value="" disabled selected>{{ langState.t('เลือกระยะเวลาผ่อน', 'Select Term') }}</option>
-          <option :value="12">12</option>
-          <option :value="24">24</option>
-          <option :value="36">36</option>
-          <option :value="48">48</option>
-          <option :value="60">60</option>
-          <option :value="72">72</option>
-          <option :value="84">84</option>
-        </select>
-      </div>
+              <div class="form-group">
+                <label class="label">{{ langState.t('เงินดาวน์ (%)', 'Down Payment (%)') }}</label>
+                <input type="number" v-model="downPayment" class="custom-input" placeholder="0" />
+              </div>
 
-      <div class="form-group">
-        <label>{{ langState.t('อัตราดอกเบี้ย (%)', 'Interest Rate (%)') }}</label>
-        <input type="number" v-model="interestRate" step="0.1" placeholder="" />
-      </div>
+              <div class="form-group">
+                <label class="label">{{ langState.t('ระยะเวลาผ่อน (เดือน)', 'Loan Term (Months)') }}</label>
+                <div class="select-wrapper">
+                  <select v-model="loanTerm" class="custom-select">
+                    <option value="" disabled selected>{{ langState.t('เลือกระยะเวลาผ่อน', 'Select Term') }}</option>
+                    <option :value="12">12</option>
+                    <option :value="24">24</option>
+                    <option :value="36">36</option>
+                    <option :value="48">48</option>
+                    <option :value="60">60</option>
+                    <option :value="72">72</option>
+                    <option :value="84">84</option>
+                  </select>
+                  <div class="select-arrows">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
 
-      <template v-if="activeTab === 'AI'">
-        <div class="form-group">
-          <label>{{ langState.t('ค่าบริการ', 'Service Fee') }}</label>
-          <input type="number" v-model="serviceFee" placeholder="" />
-        </div>
-        <div class="form-group">
-          <label>{{ langState.t('ค่าบริการอื่นๆ', 'Other Service Fee') }}</label>
-          <input type="number" v-model="otherServiceFee" placeholder="" />
-        </div>
-      </template>
+              <div class="form-group">
+                <label class="label">{{ langState.t('อัตราดอกเบี้ย (%)', 'Interest Rate (%)') }}</label>
+                <input type="number" v-model="interestRate" step="0.1" class="custom-input" placeholder="0.0" />
+              </div>
 
-      <div class="button-group">
-        <button class="clear-btn" @click="clear">{{ langState.t('ล้างข้อมูล', 'Clear') }}</button>
-        <button class="calculate-btn" @click="calculate">{{ langState.t('คำนวณ', 'Calculate') }}</button>
-      </div>
+              <template v-if="activeTab === 'AI'">
+                <div class="form-group">
+                  <label class="label">{{ langState.t('ค่าบริการ', 'Service Fee') }}</label>
+                  <input type="number" v-model="serviceFee" class="custom-input" placeholder="0" />
+                </div>
+                <div class="form-group">
+                  <label class="label">{{ langState.t('ค่าบริการอื่นๆ', 'Other Service Fee') }}</label>
+                  <input type="number" v-model="otherServiceFee" class="custom-input" placeholder="0" />
+                </div>
+              </template>
 
-      <!-- Result Card for Standard -->
-      <div v-if="results && activeTab === 'Standard'" class="result-card">
-        <div class="result-item">
-          <span class="result-label">{{ langState.t('ยอดจัดสินเชื่อ', 'Loan Amount') }}</span>
-          <span class="result-value">{{ formatNumber(results.loanAmount) }}</span>
-        </div>
-        <div class="result-item">
-          <span class="result-label">{{ langState.t('ยอดชำระรวม', 'Total Payment') }}</span>
-          <span class="result-value">{{ formatNumber(results.totalPayment) }}</span>
-        </div>
-        <div class="result-item monthly">
-          <span class="result-label">{{ langState.t('ค่างวดต่อเดือน (บาท)', 'Monthly Installment (THB)') }}</span>
-          <span class="result-value highlighted">{{ formatNumber(results.monthlyInstallment) }}</span>
-        </div>
-      </div>
+              <div class="action-buttons">
+                <button class="btn-clear" @click="clear">{{ langState.t('ล้างข้อมูล', 'Clear') }}</button>
+                <button class="btn-submit" @click="calculate">{{ langState.t('คำนวณ', 'Calculate') }}</button>
+              </div>
+            </div>
+          </div>
 
-      <!-- Result Card for AI (Based on User Image) -->
-      <div v-if="results && activeTab === 'AI'" class="result-card ai-results">
-        <div class="result-item">
-          <span class="result-label">Car Amount</span>
-          <span class="result-value">{{ formatNumber(results.carAmount) }} Baht</span>
-        </div>
-        <div class="result-item">
-          <span class="result-label">Loan Term</span>
-          <span class="result-value">{{ results.loanTerm }} Month</span>
-        </div>
-        <div class="result-item">
-          <span class="result-label">Interest rate</span>
-          <span class="result-value">{{ results.interestRate }} %</span>
-        </div>
-        <div class="result-item">
-          <span class="result-label">Service Fee</span>
-          <span class="result-value">{{ results.serviceFee }} Baht</span>
-        </div>
-        <div class="result-item">
-          <span class="result-label">Other Service Fee</span>
-          <span class="result-value">{{ results.otherServiceFee }} Baht</span>
-        </div>
-        <div class="result-item total">
-          <span class="result-label">Total Payment</span>
-          <span class="result-value highlighted">{{ formatNumber(results.totalPayment) }} Baht</span>
+          <!-- Result Section -->
+          <div class="result-section">
+            <div class="result-card" :class="{ 'has-results': results }">
+              <h3 class="card-heading">{{ langState.t('สรุปผลการประเมิน', 'Estimation Summary') }}</h3>
+              
+              <div v-if="!results" class="empty-state">
+                <div class="empty-icon-wrapper">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                    <line x1="8" y1="6" x2="16" y2="6"></line>
+                    <line x1="16" y1="14" x2="16" y2="14.01"></line>
+                    <line x1="16" y1="10" x2="16" y2="10.01"></line>
+                    <line x1="12" y1="14" x2="12" y2="14.01"></line>
+                    <line x1="12" y1="10" x2="12" y2="10.01"></line>
+                    <line x1="8" y1="14" x2="8" y2="14.01"></line>
+                    <line x1="8" y1="10" x2="8" y2="10.01"></line>
+                  </svg>
+                </div>
+                <p>{{ langState.t('กรอกข้อมูลเพื่อดูผลการคำนวณ', 'Enter details to see the calculation') }}</p>
+              </div>
+
+              <!-- Standard Result -->
+              <div v-if="results && activeTab === 'Standard'" class="result-content">
+                <div class="result-item">
+                  <span class="result-label">{{ langState.t('ยอดจัดสินเชื่อ', 'Loan Amount') }}</span>
+                  <span class="result-value">{{ formatNumber(results.loanAmount) }} <span>THB</span></span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">{{ langState.t('ยอดชำระรวม', 'Total Payment') }}</span>
+                  <span class="result-value">{{ formatNumber(results.totalPayment) }} <span>THB</span></span>
+                </div>
+                
+                <div class="hero-result-item">
+                  <span class="hero-label">{{ langState.t('ค่างวดต่อเดือน', 'Monthly Installment') }}</span>
+                  <span class="hero-value">{{ formatNumber(results.monthlyInstallment) }} <span class="hero-currency">THB</span></span>
+                </div>
+              </div>
+
+              <!-- AI Result -->
+              <div v-if="results && activeTab === 'AI'" class="result-content ai-results">
+                <div class="result-item">
+                  <span class="result-label">Car Amount</span>
+                  <span class="result-value">{{ formatNumber(results.carAmount) }} <span>Baht</span></span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Loan Term</span>
+                  <span class="result-value">{{ results.loanTerm }} <span>Month</span></span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Interest rate</span>
+                  <span class="result-value highlight">{{ results.interestRate }} <span>%</span></span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Service Fee</span>
+                  <span class="result-value">{{ formatNumber(results.serviceFee) }} <span>Baht</span></span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Other Service Fee</span>
+                  <span class="result-value">{{ formatNumber(results.otherServiceFee) }} <span>Baht</span></span>
+                </div>
+                
+                <div class="hero-result-item">
+                  <span class="hero-label">Total Payment</span>
+                  <span class="hero-value">{{ formatNumber(results.totalPayment) }} <span class="hero-currency">Baht</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -197,168 +252,437 @@ const formatNumber = (num) => {
 </template>
 
 <style scoped>
-.loan-calculator {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background-color: #ffffff;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.orange-header {
-  background-color: #f57c1f;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: white;
-}
-
-.back-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-}
-
-.header-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.content {
-  padding: 20px;
-  flex: 1;
+.calculator-absolute-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f4f7fc;
+  z-index: 50;
   overflow-y: auto;
+  overflow-x: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-.tabs {
+.calculator-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px 80px 32px;
+}
+
+/* Navbar */
+.navbar {
   display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 0;
+  margin-bottom: 8px;
+}
+
+.icon-btn {
+  width: 52px;
+  height: 52px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+@media (hover: hover) {
+  .icon-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.empty-space {
+  width: 52px;
+}
+
+.greeting-main {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* Tabs */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.tabs-bg {
+  display: flex;
+  background-color: #e2e8f0;
+  border-radius: 99px;
+  padding: 6px;
+  width: 100%;
+  max-width: 500px;
 }
 
 .tab-btn {
   flex: 1;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 14px 24px;
+  border-radius: 99px;
   border: none;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  font-size: 16px;
+  transition: all 0.3s ease;
 }
 
-.active-standard {
-  background-color: #6b7280;
-  color: white;
+.active-tab {
+  background-color: #ffffff;
+  color: #f97316;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.active-ai {
-  background-color: #f57c1f;
-  color: white;
+.inactive-tab {
+  background-color: transparent;
+  color: #64748b;
 }
 
-.inactive {
-  background-color: #e5e7eb;
-  color: #6b7280;
+/* Main Grid */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Form Section */
+.glass-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.card-heading {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 32px 0;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
-.form-group label {
+.label {
   display: block;
-  font-size: 14px;
-  color: #9ca3af;
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 16px;
-  background-color: white;
-  color: #111827;
-}
-
-.button-group {
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
-}
-
-.clear-btn,
-.calculate-btn {
-  flex: 1;
-  padding: 14px;
-  border-radius: 16px;
-  border: none;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 700;
+  color: #475569;
+  margin-bottom: 12px;
+}
+
+.custom-input,
+.custom-select {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  background-color: #f8fafc;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+}
+
+.custom-select {
+  appearance: none;
+  padding-right: 48px;
   cursor: pointer;
 }
 
-.clear-btn {
-  background-color: #6b7280;
-  color: white;
+.custom-input:focus,
+.custom-select:focus {
+  border-color: #f97316;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
 }
 
-.calculate-btn {
-  background-color: #f57c1f;
-  color: white;
+.custom-input::placeholder {
+  color: #94a3b8;
+  font-weight: 500;
 }
 
+.select-wrapper {
+  position: relative;
+}
+
+.select-arrows {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #94a3b8;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.btn-submit, .btn-clear {
+  flex: 1;
+  padding: 18px;
+  border: none;
+  border-radius: 99px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-submit {
+  background-color: #f97316;
+  color: #ffffff;
+  box-shadow: 0 8px 16px rgba(249, 115, 22, 0.25);
+}
+
+.btn-clear {
+  background-color: #e2e8f0;
+  color: #475569;
+}
+
+@media (hover: hover) {
+  .btn-submit:hover {
+    background-color: #ea580c;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(249, 115, 22, 0.35);
+  }
+  
+  .btn-clear:hover {
+    background-color: #cbd5e1;
+    color: #0f172a;
+  }
+}
+
+/* Result Section */
 .result-card {
-  margin-top: 32px;
-  background-color: white;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.result-card.has-results {
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf5 100%);
+  border-color: rgba(249, 115, 22, 0.2);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: #94a3b8;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.empty-icon-wrapper {
+  background-color: #f8fafc;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.result-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .result-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.result-item:last-child {
-  border-bottom: none;
+  padding: 16px;
+  background-color: #f8fafc;
+  border-radius: 16px;
 }
 
 .result-label {
-  font-weight: 700;
-  color: #111827;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #64748b;
 }
 
 .result-value {
-  color: #374151;
-  font-size: 16px;
-}
-
-.result-item.monthly,
-.result-item.total {
-  margin-top: 8px;
-  padding-top: 16px;
-}
-
-.result-value.highlighted {
-  color: #111827;
-  font-weight: 800;
   font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
 }
 
-.ai-results .result-label {
+.result-value span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-left: 4px;
+}
+
+.result-value.highlight {
+  color: #f97316;
+}
+
+.hero-result-item {
+  margin-top: 24px;
+  padding: 32px 24px;
+  background-color: #f97316;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(249, 115, 22, 0.25);
+}
+
+.hero-label {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  opacity: 0.9;
+}
+
+.hero-value {
+  font-size: 40px;
   font-weight: 800;
+  line-height: 1;
+}
+
+.hero-currency {
+  font-size: 18px;
+  font-weight: 600;
+  opacity: 0.8;
+  margin-left: 4px;
+}
+
+/* Responsive constraints */
+@media (max-width: 992px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .calculator-absolute-wrapper {
+    position: absolute;
+    width: 100vw;
+  }
+  
+  .calculator-content {
+    padding: 0 16px 32px 16px;
+  }
+
+  .navbar {
+    padding: 16px 0;
+    margin-bottom: 12px;
+  }
+
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .empty-space {
+    width: 44px;
+  }
+
+  .greeting-main {
+    font-size: 18px;
+  }
+  
+  .tabs-container {
+    margin-bottom: 24px;
+  }
+  
+  .tab-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .glass-card {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+  
+  .card-heading {
+    font-size: 20px;
+    margin-bottom: 24px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .label {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  .custom-input, .custom-select {
+    padding: 14px 16px;
+    font-size: 15px;
+    border-radius: 14px;
+  }
+  
+  .action-buttons {
+    flex-direction: column-reverse;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  
+  .btn-submit, .btn-clear {
+    padding: 16px;
+    font-size: 16px;
+    width: 100%;
+  }
+  
+  .result-card {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+  
+  .hero-result-item {
+    padding: 24px 20px;
+  }
+  
+  .hero-value {
+    font-size: 32px;
+  }
 }
 </style>
