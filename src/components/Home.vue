@@ -281,10 +281,12 @@ const handleContactUs = () => {
   box-shadow: 0 8px 16px rgba(249, 115, 22, 0.25);
 }
 
-.hero-btn:hover {
-  background-color: #ea580c;
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 12px 24px rgba(249, 115, 22, 0.35);
+@media (hover: hover) {
+  .hero-btn:hover {
+    background-color: #ea580c;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(249, 115, 22, 0.35);
+  }
 }
 
 /* Services Section */
@@ -318,10 +320,12 @@ const handleContactUs = () => {
   align-items: flex-start;
 }
 
-.service-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-  border-color: rgba(249, 115, 22, 0.3);
+@media (hover: hover) {
+  .service-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+    border-color: rgba(249, 115, 22, 0.3);
+  }
 }
 
 .card-icon {
@@ -336,9 +340,11 @@ const handleContactUs = () => {
   transition: all 0.3s ease;
 }
 
-.service-card:hover .card-icon {
-  background: #f97316;
-  transform: scale(1.05);
+@media (hover: hover) {
+  .service-card:hover .card-icon {
+    background: #f97316;
+    transform: scale(1.05);
+  }
 }
 
 /* Fill or stroke color switches to white on hover */
@@ -349,11 +355,13 @@ const handleContactUs = () => {
   transition: all 0.3s ease;
 }
 
-.service-card:hover .animated-icon [stroke] {
-  stroke: #ffffff !important;
-}
-.service-card:hover .animated-icon [fill]:not([fill="none"]) {
-  fill: #ffffff !important;
+@media (hover: hover) {
+  .service-card:hover .animated-icon [stroke] {
+    stroke: #ffffff !important;
+  }
+  .service-card:hover .animated-icon [fill]:not([fill="none"]) {
+    fill: #ffffff !important;
+  }
 }
 
 .card-title {

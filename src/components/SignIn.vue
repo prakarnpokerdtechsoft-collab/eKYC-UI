@@ -17,9 +17,8 @@ const handleSubmit = () => {
   <div class="signin-container">
     <div class="logo-section">
       <AppLogo />
+      <div class="role-text">{{ langState.t('ลูกค้า', 'Customer') }}</div>
     </div>
-
-    <div class="role-text">{{ langState.t('ลูกค้า', 'Customer') }}</div>
 
     <div class="title-section">
       <h2>{{ langState.t('เข้าสู่ระบบ', 'Sign in') }}</h2>
@@ -54,16 +53,14 @@ const handleSubmit = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 24px;
 }
-
-
 
 .role-text {
   color: var(--primary-orange);
   font-weight: 600;
   font-size: 16px;
-  margin-bottom: 16px;
+  margin-top: 4px;
 }
 
 .title-section {
@@ -93,7 +90,7 @@ const handleSubmit = () => {
 }
 
 .input-group {
-  margin-bottom: auto;
+  margin-top: auto;
 }
 
 .phone-input {
@@ -127,7 +124,7 @@ const handleSubmit = () => {
   cursor: pointer;
   transition: all 0.2s ease;
   margin-bottom: 16px;
-  margin-top: 24px;
+  margin-top: 16px;
 }
 
 .submit-btn:hover {
