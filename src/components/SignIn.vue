@@ -101,7 +101,7 @@ const handleSubmit = () => {
   padding: 16px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
   transition: all 0.2s ease;
 }
