@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://192.168.152.252/ON_API/',
+  baseURL: 'https://ekyc-j7lp.onrender.com/',
   headers: { 'Content-Type': 'application/json' }
 });
 
