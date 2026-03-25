@@ -1,44 +1,15 @@
-<template>
-    <div class="appman-container">
-        <header class="appman-header">
-            <button class="back-btn" @click="$emit('back')">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 18L9 12L15 6" stroke="white" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-            </button>
-            <h1 class="header-title">Apply for Auto Loan</h1>
-            <div class="empty-space"></div>
-        </header>
-
-        <div class="iframe-wrapper">
-            <iframe :src="`https://techsoft-ekyc-demo.mac.appmanteam.com/apps/identity-verification/${id}?lang=th`"
-                class="full-screen-iframe" allow="camera; microphone; display-capture" frameborder="0"
-                @load="checkIfFinished"></iframe>
-        </div>
-
-        <footer class="appman-footer">
-            <button :class="['next-btn', status]" :disabled="status === 'loading'" @click="nextStep">
-                <span v-if="status === 'loading'" class="loader"></span>
-
-                <span v-if="status === 'loading'">กรุณาดำเนินการในระบบ...</span>
-                <span v-else-if="status === 'success'">ตกลง / ไปต่อ</span>
-            </button>
-        </footer>
-    </div>
-</template>
-
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { checkStatus } from '../services/api'
+import QRCode from './QRCode.vue'
 
 const props = defineProps({
     id: String
 })
+const isQR = ref(true);
+const status = ref('waiting');
 
-const status = ref('loading');
-
-let pollTimer = null;
+// let pollTimer = null;
 
 const check = async () => {
     try {
@@ -51,31 +22,33 @@ const check = async () => {
         // }
         if (response.data.status === 'verified') {
             status.value = 'success';
-            stopPolling(); // 🛑 หยุดถามเมื่อสำเร็จแล้ว
+            nextStep();
+            // stopPolling(); // 🛑 หยุดถามเมื่อสำเร็จแล้ว
         }
     } catch (error) {
         console.error("เช็คสถานะไม่สำเร็จ", error);
     }
 };
 
-const startPolling = () => {
-    pollTimer = setInterval(check, 30000);
-};
+// const startPolling = () => {
+//     status.value = 'loading';
+//     pollTimer = setInterval(check, 30000);
+// };
 
-const stopPolling = () => {
-    if (pollTimer) {
-        clearInterval(pollTimer);
-        pollTimer = null;
-    }
-};
+// const stopPolling = () => {
+//     if (pollTimer) {
+//         clearInterval(pollTimer);
+//         pollTimer = null;
+//     }
+// };
 
-onMounted(() => {
-    startPolling();
-});
+// onMounted(() => {
+//     startPolling();
+// });
 
-onUnmounted(() => {
-    stopPolling();
-});
+// onUnmounted(() => {
+//     stopPolling();
+// });
 
 const checkIfFinished = (event) => {
     // ทุกครั้งที่ iframe เปลี่ยนหน้า หรือโหลดใหม่ ฟังก์ชันนี้จะทำงาน
@@ -101,6 +74,48 @@ const nextStep = () => {
     }
 }
 </script>
+
+<template>
+    <div class="appman-container">
+        <header class="appman-header">
+            <button class="back-btn" @click="$emit('back')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="white" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </button>
+            <h1 class="header-title">Apply for Auto Loan</h1>
+            <div class="empty-space"></div>
+        </header>
+
+        <div v-if="isQR" class="qr-container">
+            <QRCode :value="`https://techsoft-ekyc-demo.mac.appmanteam.com/apps/identity-verification/${id}?lang=th`"
+                :size="250" filename="vue-website-qr" />
+            <span>ยืนยันตัวตนผ่าน QR Code ด้วยโทรศัพท์มือถือ<br> หรือยืนยันตัวตนผ่านระบบนี้ทันที <a
+                    @click="isQR = false">คลิกที่นี่</a>
+                <br>แล้วกดปุ่มดำเนินการต่อ</span>
+        </div>
+
+        <div v-else class="iframe-wrapper">
+            <iframe :src="`https://techsoft-ekyc-demo.mac.appmanteam.com/apps/identity-verification/${id}?lang=th`"
+                class="full-screen-iframe" allow="camera; microphone; display-capture" frameborder="0"
+                @load="checkIfFinished"></iframe>
+        </div>
+
+        <footer class="appman-footer">
+            <button :class="['next-btn', status]" @click="check()">
+                <span>ดำเนินการต่อ</span>
+            </button>
+            <!-- <button :class="['next-btn', status]" :disabled="status === 'loading'"
+                @click="status === 'waiting' ? check() : nextStep()">
+                <span v-if="status === 'waiting'">ตรวจสอบสถานะ</span>
+                <span v-if="status === 'loading'" class="loader"></span>
+                <span v-if="status === 'loading'">กรุณาดำเนินการในระบบ...</span>
+                <span v-else-if="status === 'success'">ดำเนินการต่อ</span>
+            </button> -->
+        </footer>
+    </div>
+</template>
 
 <style scoped>
 .appman-container {
@@ -180,6 +195,12 @@ const nextStep = () => {
     box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
 }
 
+a {
+    color: #f97316;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .loader {
     width: 18px;
     height: 18px;
@@ -198,6 +219,23 @@ const nextStep = () => {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.qr-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 0 auto;
+    flex: 1;
+}
+
+.qr-container span {
+    margin: 1.5rem;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    text-align: center;
 }
 
 .iframe-wrapper {

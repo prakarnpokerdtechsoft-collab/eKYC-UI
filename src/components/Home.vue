@@ -1,7 +1,7 @@
 <script setup>
 import { langState } from '../store/lang.js'
 
-const emit = defineEmits(['apply-loan', 'view-news', 'contact-us', 'find-dream-car', 'track-status'])
+const emit = defineEmits(['apply-loan', 'view-news', 'contact-us', 'find-dream-car', 'track-status', 'calculate-loan'])
 
 const handleViewNews = () => {
   console.log('Promotion And News clicked!')
@@ -81,7 +81,7 @@ const handleContactUs = () => {
       </button>
 
       <!-- 4: Calculate -->
-      <button class="menu-item">
+      <button class="menu-item" @click="$emit('calculate-loan')">
         <div class="icon-wrapper">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary-orange, #f97316)"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
