@@ -3,8 +3,8 @@
     <!-- Header -->
     <header class="page-header">
       <button class="back-btn" @click="emit('back')">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18L9 12L15 6" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
       <h1 class="header-title">{{ langState.t('ติดต่อเรา', 'Contact Us') }}</h1>
@@ -152,13 +152,20 @@ onMounted(() => {
 
 <style scoped>
 .chat-page {
-  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
   background-color: #f4f6f9;
   font-family: 'Inter', -apple-system, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30px 20px;
+  padding: 0 32px 32px 32px;
+  z-index: 50;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -168,12 +175,13 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  padding: 32px 0;
+  margin-bottom: 16px;
 }
 
 .back-btn {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background-color: white;
   border: none;
@@ -181,23 +189,26 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  transition: transform 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
-.back-btn:active {
-  transform: scale(0.95);
+@media (hover: hover) {
+  .back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .header-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1a1a1a;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
   margin: 0;
 }
 
 .header-spacer {
-  width: 48px; /* For flex centering balance */
+  width: 52px; /* For flex centering balance */
 }
 
 /* Chat Card */
@@ -209,7 +220,7 @@ onMounted(() => {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 140px);
+  height: calc(100dvh - 140px);
   overflow: hidden;
 }
 
@@ -348,15 +359,26 @@ onMounted(() => {
 }
 
 /* Responsive adjustments */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .chat-page {
-    padding: 16px;
+    padding: 0 16px 16px 16px;
   }
   .page-header {
-    margin-bottom: 16px;
+    padding: 16px 0;
+    margin-bottom: 8px;
+  }
+  .back-btn {
+    width: 44px;
+    height: 44px;
+  }
+  .header-spacer {
+    width: 44px;
+  }
+  .header-title {
+    font-size: 18px;
   }
   .chat-card {
-    height: calc(100vh - 100px);
+    height: calc(100dvh - 100px);
     border-radius: 20px;
   }
   .chat-messages {
