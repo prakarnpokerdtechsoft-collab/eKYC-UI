@@ -1,382 +1,369 @@
-<script setup>
-import { ref } from 'vue'
-import { langState } from '../store/lang.js'
-
-const emit = defineEmits(['back'])
-
-const message = ref('')
-const chatHistory = ref([
-  {
-    id: 1,
-    sender: 'bot',
-    text: 'Hello, how can i help you?'
-  }
-])
-
-const sendMessage = () => {
-  if (message.value.trim()) {
-    chatHistory.value.push({
-      id: Date.now(),
-      sender: 'user',
-      text: message.value
-    })
-    message.value = ''
-  }
-}
-</script>
-
 <template>
-  <div class="chat-absolute-wrapper">
-    <div class="chat-content">
-      <!-- Navbar -->
-      <header class="navbar">
-        <button class="icon-btn back-btn" @click="$emit('back')">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 18L9 12L15 6" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <div class="chat-page">
+    <!-- Header -->
+    <header class="page-header">
+      <button class="back-btn" @click="emit('back')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <h1 class="header-title">{{ langState.t('ติดต่อเรา', 'Contact Us') }}</h1>
+      <div class="header-spacer"></div>
+    </header>
+
+    <!-- Main Chat Card -->
+    <div class="chat-card">
+      <div class="chat-messages" ref="chatBody">
+        <div 
+          v-for="msg in chatHistory" 
+          :key="msg.id" 
+          :class="['message-row', msg.sender]"
+        >
+          <div v-if="msg.sender === 'bot'" class="bot-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+              <circle cx="12" cy="5" r="2"></circle>
+              <path d="M12 7v4"></path>
+              <line x1="8" y1="16" x2="8" y2="16"></line>
+              <line x1="16" y1="16" x2="16" y2="16"></line>
+            </svg>
+          </div>
+          <div class="message-bubble">{{ msg.text }}</div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-wrapper">
+        <div class="input-box">
+          <input 
+            v-model="message" 
+            @keyup.enter="sendMessage"
+            :placeholder="langState.t('พิมพ์ข้อความของคุณ...', 'Type your message...')" 
+            class="chat-input"
+            autocomplete="off"
+          />
+          <button class="icon-btn mic-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+          </button>
+        </div>
+        <button class="send-btn" @click="sendMessage" :disabled="!message.trim()">
+          <svg style="margin-left: -2px; margin-top: 2px" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>
         </button>
-        <div class="greeting">
-          <span class="greeting-main">{{ langState.t('ติดต่อเรา', 'Contact Us') }}</span>
-        </div>
-        <div class="empty-space"></div>
-      </header>
-
-      <div class="page-body">
-        <div class="glass-card chat-glass-card">
-          <div class="chat-body" ref="chatBody">
-            <div v-for="msg in chatHistory" :key="msg.id" class="message-row" :class="msg.sender">
-              <div v-if="msg.sender === 'bot'" class="bot-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="11" width="18" height="10" rx="2" ry="2"></rect>
-                  <circle cx="12" cy="5" r="2"></circle>
-                  <path d="M12 7v4"></path>
-                  <line x1="8" y1="16" x2="8" y2="16"></line>
-                  <line x1="16" y1="16" x2="16" y2="16"></line>
-                </svg>
-              </div>
-              <div class="message-bubble">
-                {{ msg.text }}
-              </div>
-            </div>
-          </div>
-
-          <div class="chat-input-area">
-            <div class="input-pill">
-              <input 
-                type="text" 
-                v-model="message" 
-                class="chat-input"
-                :placeholder="langState.t('พิมพ์ข้อความของคุณ...', 'Write your message')" 
-                @keyup.enter="sendMessage"
-              />
-              <button class="icon-action-btn mic-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                  <line x1="12" y1="19" x2="12" y2="23"></line>
-                  <line x1="8" y1="23" x2="16" y2="23"></line>
-                </svg>
-              </button>
-              <button class="icon-action-btn send-btn" @click="sendMessage">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="22" y1="2" x2="11" y2="13"></line>
-                  <polygon points="22 2 15 22 11 13 2 9 22 2" fill="#ffffff" stroke="none"></polygon>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+<script setup>
+import { ref, nextTick, onMounted } from 'vue'
+import { langState } from '../store/lang.js'
 
-.chat-absolute-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #f4f7fc;
-  z-index: 50;
-  overflow-y: auto;
-  overflow-x: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+const emit = defineEmits(['back'])
+
+const message = ref('')
+const chatBody = ref(null)
+
+const chatHistory = ref([
+  {
+    id: 'init-msg',
+    sender: 'bot',
+    text: langState.t('Hello, how can i help you?', 'Hello, how can i help you?')
+  }
+])
+
+const generateId = () => Date.now().toString() + Math.random().toString(36).substring(2)
+
+const getBotReply = (msg) => {
+  const text = msg.toLowerCase()
+
+  if (text.includes('สินเชื่อ') || text.includes('loan')) {
+    return langState.t('คุณสามารถสมัครสินเชื่อได้ที่เมนู "สมัครสินเชื่อรถยนต์" ครับ', 'You can apply for a loan via the "Apply for Auto Loan" menu.')
+  }
+
+  if (text.includes('ดอกเบี้ย') || text.includes('interest')) {
+    return langState.t('ดอกเบี้ยเริ่มต้นอยู่ที่ประมาณ 2.5% ต่อปีครับ', 'The starting interest rate is around 2.5% per year.')
+  }
+
+  if (text.includes('ติดต่อ') || text.includes('contact')) {
+    return langState.t('เจ้าหน้าที่จะติดต่อกลับภายใน 24 ชั่วโมงครับ', 'Our agent will contact you back within 24 working hours.')
+  }
+
+  if (text.includes('สวัสดี') || text.includes('hello') || text.includes('hi')) {
+    return langState.t('สวัสดีครับ 👋 มีอะไรให้ผมช่วยไหมครับ', 'Hello 👋 How can I help you today?')
+  }
+
+  return langState.t('ระบบได้รับข้อความของคุณแล้ว 🙏', 'We have received your message. 🙏')
 }
 
-.chat-content {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 32px 80px 32px;
-  height: 100vh;
+// auto scroll
+const scrollToBottom = async () => {
+  await nextTick()
+  if (chatBody.value) {
+    chatBody.value.scrollTop = chatBody.value.scrollHeight
+  }
+}
+
+// send message
+const sendMessage = async () => {
+  if (!message.value.trim()) return
+
+  const userMsg = message.value
+
+  chatHistory.value.push({
+    id: generateId(),
+    sender: 'user',
+    text: userMsg
+  })
+
+  message.value = ''
+  await scrollToBottom()
+
+  const loadingId = generateId()
+  chatHistory.value.push({
+    id: loadingId,
+    sender: 'bot',
+    text: langState.t('กำลังพิมพ์...', 'typing...')
+  })
+
+  await scrollToBottom()
+
+  setTimeout(async () => {
+    const reply = getBotReply(userMsg)
+    const index = chatHistory.value.findIndex(m => m.id === loadingId)
+    if (index !== -1) {
+      chatHistory.value[index].text = reply
+    }
+    await scrollToBottom()
+  }, 700)
+}
+
+onMounted(() => {
+  scrollToBottom()
+})
+</script>
+
+<style scoped>
+.chat-page {
+  min-height: 100vh;
+  background-color: #f4f6f9;
+  font-family: 'Inter', -apple-system, sans-serif;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
 }
 
-/* Navbar */
-.navbar {
+/* Header */
+.page-header {
+  width: 100%;
+  max-width: 800px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 32px 0;
-  margin-bottom: 8px;
-  flex-shrink: 0;
+  margin-bottom: 24px;
 }
 
-.icon-btn {
-  width: 52px;
-  height: 52px;
-  background-color: #ffffff;
+.back-btn {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
+  background-color: white;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   cursor: pointer;
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s;
 }
 
-@media (hover: hover) {
-  .icon-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-  }
+.back-btn:active {
+  transform: scale(0.95);
 }
 
-.empty-space {
-  width: 52px;
+.header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
 }
 
-.greeting-main {
-  font-size: 20px;
-  font-weight: 800;
-  color: #0f172a;
+.header-spacer {
+  width: 48px; /* For flex centering balance */
 }
 
-/* Page Body */
-.page-body {
+/* Chat Card */
+.chat-card {
   width: 100%;
-  flex: 1;
+  max-width: 800px;
+  background-color: white;
+  border-radius: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  padding-bottom: 16px;
-  min-height: 0;
-}
-
-.chat-glass-card {
-  background: #ffffff;
-  border-radius: 32px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  height: calc(100vh - 140px);
   overflow: hidden;
 }
 
-.chat-body {
+/* Messages */
+.chat-messages {
   flex: 1;
-  padding: 32px;
+  padding: 30px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  background-color: #f8fafc;
+  gap: 20px;
 }
 
 .message-row {
   display: flex;
-  align-items: flex-end;
-  gap: 12px;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
 }
 
 .message-row.user {
-  flex-direction: row-reverse;
+  justify-content: flex-end;
 }
 
-.bot-icon {
-  width: 40px;
-  height: 40px;
+.bot-avatar {
+  background-color: #f96300; /* Distinct orange from image */
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
-}
-
-.message-bubble {
-  padding: 16px 20px;
-  font-size: 15px;
-  line-height: 1.5;
-  max-width: 75%;
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  box-shadow: 0 4px 10px rgba(249, 99, 0, 0.2);
 }
 
 .bot .message-bubble {
   background-color: #ffffff;
-  color: #1e293b;
-  border-radius: 20px 20px 20px 4px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #eef0f4;
+  border-radius: 12px 12px 12px 12px;
+  padding: 16px 20px;
+  font-size: 15px;
+  color: #333;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  line-height: 1.5;
+  max-width: 80%;
 }
 
 .user .message-bubble {
-  background-color: #0f172a;
-  color: #ffffff;
-  border-radius: 20px 20px 4px 20px;
+  background-color: #f4f6f9;
+  border-radius: 12px 12px 12px 12px;
+  padding: 16px 20px;
+  font-size: 15px;
+  color: #333;
+  line-height: 1.5;
+  max-width: 80%;
 }
 
-.chat-input-area {
-  padding: 24px 32px;
-  background-color: #ffffff;
-  border-top: 1px solid #f1f5f9;
-}
-
-.input-pill {
+/* Input Area */
+.chat-input-wrapper {
+  padding: 24px 30px;
+  border-top: 1px solid #f4f6f9;
   display: flex;
   align-items: center;
-  background-color: #f8fafc;
-  border-radius: 99px;
-  padding: 8px 8px 8px 24px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
+  gap: 16px;
+  background-color: white;
 }
 
-.input-pill:focus-within {
-  background-color: #ffffff;
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+.input-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: #f4f6f9; /* Matching image grayish fill */
+  border-radius: 30px;
+  padding: 6px 16px 6px 24px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.input-box:focus-within {
+  border-color: #e0e0e0;
 }
 
 .chat-input {
   flex: 1;
   border: none;
-  outline: none;
-  font-size: 15px;
-  font-weight: 500;
-  padding: 12px 0;
   background: transparent;
-  color: #0f172a;
+  padding: 12px 0;
+  font-size: 15px;
+  outline: none;
+  color: #333;
 }
 
 .chat-input::placeholder {
-  color: #94a3b8;
+  color: #a0aab2;
 }
 
-.icon-action-btn {
+.icon-btn {
   background: none;
   border: none;
-  width: 40px;
-  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.send-btn {
+  background-color: #f96300;
+  border: none;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(249, 99, 0, 0.25);
+  flex-shrink: 0;
+  transition: transform 0.2s, background-color 0.2s;
 }
 
-.mic-btn {
-  margin-right: 8px;
+.send-btn:hover:not(:disabled) {
+  background-color: #e55a00;
+  transform: scale(1.05);
 }
 
-@media (hover: hover) {
-  .mic-btn:hover {
-    background-color: #e2e8f0;
-  }
+.send-btn:active:not(:disabled) {
+  transform: scale(0.95);
 }
 
-.send-btn {
-  background-color: #f97316;
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+.send-btn:disabled {
+  background-color: #e0e0e0;
+  box-shadow: none;
+  cursor: not-allowed;
 }
 
-@media (hover: hover) {
-  .send-btn:hover {
-    background-color: #ea580c;
-    transform: scale(1.05);
-  }
-}
-
-/* Responsive constraints */
-@media (max-width: 768px) {
-  .chat-absolute-wrapper {
-    position: absolute;
-    width: 100vw;
-  }
-  
-  .chat-content {
-    padding: 0 16px 24px 16px;
-  }
-
-  .navbar {
-    padding: 16px 0;
-    margin-bottom: 8px;
-  }
-
-  .icon-btn {
-    width: 44px;
-    height: 44px;
-  }
-  
-  .empty-space {
-    width: 44px;
-  }
-
-  .greeting-main {
-    font-size: 18px;
-  }
-
-  .chat-glass-card {
-    border-radius: 24px;
-  }
-  
-  .chat-body {
-    padding: 20px 16px;
-    gap: 20px;
-  }
-  
-  .bot-icon {
-    width: 32px;
-    height: 32px;
-  }
-  
-  .bot-icon svg {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .message-bubble {
-    padding: 14px 16px;
-    font-size: 14px;
-    max-width: 85%;
-  }
-
-  .chat-input-area {
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .chat-page {
     padding: 16px;
   }
-  
-  .input-pill {
-    padding: 6px 6px 6px 16px;
+  .page-header {
+    margin-bottom: 16px;
   }
-  
-  .chat-input {
-    font-size: 14px;
+  .chat-card {
+    height: calc(100vh - 100px);
+    border-radius: 20px;
   }
-  
-  .icon-action-btn {
-    width: 36px;
-    height: 36px;
+  .chat-messages {
+    padding: 20px;
   }
-  
-  .mic-btn {
-    margin-right: 4px;
+  .chat-input-wrapper {
+    padding: 16px 20px;
   }
 }
 </style>
