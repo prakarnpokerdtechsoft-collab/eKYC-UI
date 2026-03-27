@@ -1,11 +1,27 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { langState } from '../store/lang.js'
+import civicImg from '../assets/images/civic-rs.jpg'
 
 const emit = defineEmits(['back'])
 
 const selectedCar = ref('BMW M3 Touring LCI')
 const selectedDealer = ref(null)
+
+const carDetails = computed(() => {
+  if (selectedCar.value === 'Honda Civic RS') {
+    return {
+      image: civicImg,
+      name: 'Honda Civic RS 1.5 Turbo',
+      tags: '#Honda #Civic #RS #Sporty'
+    }
+  }
+  return {
+    image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    name: '2015 BMW 528i 2.0 f10 (ปี10-16) Luxury Sedan',
+    tags: '#BMW #528i #luxury'
+  }
+})
 
 const dealers = [
   { id: 1, name: 'ธนโชค อัครมหาศาล', code: '#3-1014-80392-23-9', phone: '099-555-4444' },
@@ -49,10 +65,10 @@ const handleSubmit = () => {
           <!-- Car Preview Section -->
           <div class="car-preview-section">
             <div class="car-image-box">
-              <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Car" class="car-image" />
+              <img :src="carDetails.image" alt="Car" class="car-image transition-image" />
               <div class="car-overlay">
-                <h2 class="car-name">2015 BMW 528i 2.0 f10 (ปี10-16) Luxury Sedan</h2>
-                <p class="car-tags">#BMW #528i #luxury</p>
+                <h2 class="car-name">{{ carDetails.name }}</h2>
+                <p class="car-tags">{{ carDetails.tags }}</p>
               </div>
             </div>
           </div>
@@ -198,6 +214,10 @@ const handleSubmit = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.transition-image {
+  transition: opacity 0.5s ease-in-out;
 }
 
 .car-overlay {
