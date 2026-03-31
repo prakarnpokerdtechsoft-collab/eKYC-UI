@@ -26,7 +26,11 @@ const handleUpload = async () => {
     const formData = new FormData()
     formData.append('FileAccess', selectedFile.value)
     
-    const response = await fetch('/api/Customer/create_document', {
+    const apiUrl = import.meta.env.DEV 
+      ? '/api/Customer/create_document' 
+      : 'https://ekyc-j7lp.onrender.com/api/Customer/create_document'
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
       body: formData
     })
