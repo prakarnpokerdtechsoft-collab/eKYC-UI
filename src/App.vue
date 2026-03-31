@@ -169,6 +169,7 @@ const applyLoan = async () => {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  height: 100dvh;
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
