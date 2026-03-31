@@ -11,6 +11,7 @@ import Chat from './components/Chat.vue'
 import FindDreamCar from './components/FindDreamCar.vue'
 import FollowStatus from './components/FollowStatus.vue'
 import LoanCalculator from './components/LoanCalculator.vue'
+import UploadStatement from './components/UploadStatement.vue'
 import AppMan from './components/AppMan.vue'
 import AppDialog from './components/AppDialog.vue'
 import AppLoading from './components/AppLoading.vue'
@@ -142,7 +143,7 @@ const applyLoan = async () => {
       <ConfirmOTP v-else-if="currentView === 'ConfirmOTP'" :phone-number="phoneNumber" @submit="handleOTPSubmit" />
       <Home v-else-if="currentView === 'Home'" @apply-loan="applyLoan" @view-news="currentView = 'News'"
         @contact-us="currentView = 'Chat'" @find-dream-car="currentView = 'FindDreamCar'"
-        @track-status="currentView = 'FollowStatus'" @calculate-loan="currentView = 'LoanCalculator'" />
+        @track-status="currentView = 'FollowStatus'" @calculate-loan="currentView = 'LoanCalculator'" @upload-statement="currentView = 'UploadStatement'" />
       <IdCardInstructions v-else-if="currentView === 'IdCardInstructions'" @back="currentView = 'SignIn'"
         @next="currentView = 'IdCardCamera'" />
       <IdCardCamera v-else-if="currentView === 'IdCardCamera'" @back="currentView = 'IdCardInstructions'"
@@ -154,6 +155,7 @@ const applyLoan = async () => {
       <FindDreamCar v-else-if="currentView === 'FindDreamCar'" @back="currentView = 'Home'" />
       <FollowStatus v-else-if="currentView === 'FollowStatus'" @back="currentView = 'Home'" />
       <LoanCalculator v-else-if="currentView === 'LoanCalculator'" @back="currentView = 'Home'" />
+      <UploadStatement v-else-if="currentView === 'UploadStatement'" @back="currentView = 'Home'" />
       <AppMan :id="verificationId" v-else-if="currentView === 'AppMan'" @back="currentView = 'Home'" />
     </main>
 

@@ -15,3 +15,4 @@ export const checkStatus = (id) => apiClient.post(`/api/Customer/verifications`,
 });
 
 export default apiClient;
+

@@ -1,7 +1,7 @@
 <script setup>
 import { langState } from '../store/lang.js'
 
-const emit = defineEmits(['apply-loan', 'view-news', 'contact-us', 'find-dream-car', 'track-status', 'calculate-loan'])
+const emit = defineEmits(['apply-loan', 'view-news', 'contact-us', 'find-dream-car', 'track-status', 'calculate-loan', 'upload-statement'])
 
 const handleViewNews = () => {
   emit('view-news')
@@ -142,6 +142,21 @@ const handleContactUs = () => {
             <div class="card-info">
               <h3 class="card-title" v-html="langState.t('โปรโมชั่นและข่าวสาร', 'Promotion & News')"></h3>
               <p class="card-desc">{{ langState.t('อัพเดทสิทธิพิเศษก่อนใคร', 'Update special offers') }}</p>
+            </div>
+          </div>
+
+          <!-- 7: Upload Statement -->
+          <div class="service-card" @click="$emit('upload-statement')">
+            <div class="card-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="animated-icon">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="17 8 12 3 7 8" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="12" y1="3" x2="12" y2="15" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="card-info">
+              <h3 class="card-title">{{ langState.t('อัพโหลด Statement', 'Uploaded Statement') }}</h3>
+              <p class="card-desc">{{ langState.t('แนบเอกสารเพื่อพิจารณา', 'Attach documents') }}</p>
             </div>
           </div>
 
