@@ -12,7 +12,6 @@ import FindDreamCar from './components/FindDreamCar.vue'
 import FollowStatus from './components/FollowStatus.vue'
 import LoanCalculator from './components/LoanCalculator.vue'
 import UploadStatement from './components/UploadStatement.vue'
-import AppMan from './components/AppMan.vue'
 import AppDialog from './components/AppDialog.vue'
 import AppLoading from './components/AppLoading.vue'
 import { langState, setLang } from './store/lang.js'
@@ -38,7 +37,40 @@ const handleIncomingMessage = (event) => {
   }
 }
 
+const alertMessage = (message) => {
+  loading.value.hide();
+  errorMessage.value = message;
+  confirm.value.show({
+    title: 'เกิดข้อผิดพลาด',
+    message: errorMessage.value,
+    type: 'danger',
+    isAlert: true,
+    confirmText: 'รับทราบ'
+  })
+}
+
+const checkStatus = async () => {
+  const queryString = window.location.search; 
+  const baseUrl = window.location.origin;
+  window.history.replaceState({}, document.title, baseUrl);
+  const urlParams = new URLSearchParams(queryString);
+  const id = urlParams.get('id');
+
+  if (id) {
+    loading.value.show('Loading...');
+    const response = await checkStatus(id);
+    loading.value.hide();
+    if (response.data.status === 'verified') {
+      currentView.value = 'UploadStatement';
+    } else {
+      currentView.value = 'Home';
+      alertMessage('ยังยืนยันตัวตนไม่สำเร็จ');
+    }
+  }
+}
+
 onMounted(() => {
+  checkStatus();
   window.addEventListener('message', handleIncomingMessage)
 })
 
@@ -72,47 +104,33 @@ const handleApplicationConfirm = (formData) => {
   currentView.value = 'Home'
 }
 
+const redirectToExternal = (id) => {
+  // const externalUrl = "http://localhost:3000";
+  const externalUrl = `https://techsoft-ekyc-demo.mac.appmanteam.com/apps/identity-verification/${id}`
+  const myCallback = `${window.location.origin}/callback?id=${id}`;
+
+  // ใช้ URLSearchParams จะช่วยจัดการเรื่องตัวเชื่อม (&) ให้โดยอัตโนมัติ
+  const params = new URLSearchParams();
+  params.append('redirect', myCallback); // ฟังก์ชันนี้จะทำ encodeURIComponent ให้เองในตัว
+  params.append('lang', 'th');
+
+  const finalUrl = `${externalUrl}?${params.toString()}`;
+  console.log(finalUrl); 
+  window.location.href = finalUrl;
+};
+
 const applyLoan = async () => {
-  const result = await confirm.value.show({
-    title: 'ยืนยันการสมัครสินเชื่อ',
-    message: `คุณต้องการสมัครสินเชื่อด้วยเบอร์โทรศัพท์ ${phoneNumber.value} ใช่หรือไม่?`,
-    type: 'warning',
-    confirmText: 'ยืนยัน'
-  })
-
-  if (!result) return
-
   loading.value.show('Loading...');
-
-  try {
-    const response = await createCase(phoneNumber.value);
-    verificationId.value = response.data.verifications[0].proprietorVerifications[0].verificationId;
-    // verificationId.value = "89c5b9d3-d22a-4dd5-8d36-9a9030125ba2";
+  const response = await createCase(phoneNumber.value);
+  loading.value.hide();
+  if (response.data.verifications && response.data.verifications.length > 0) {
+    verificationId.value = response.data.verifications[0].proprietorVerifications[0].verificationId;;
     if (verificationId.value) {
-      currentView.value = 'AppMan'
-    } else {
-      errorMessage.value = 'เกิดข้อผิดพลาดในการดึงข้อมูล';
-      await confirm.value.show({
-        title: 'เกิดข้อผิดพลาด',
-        message: errorMessage.value,
-        type: 'danger',
-        isAlert: true,
-        confirmText: 'รับทราบ'
-      })
+      redirectToExternal(verificationId.value);
     }
-  } catch (error) {
-    errorMessage.value = 'เกิดข้อผิดพลาดในการดึงข้อมูล';
-    await confirm.value.show({
-      title: 'เกิดข้อผิดพลาด',
-      message: errorMessage.value,
-      type: 'danger',
-      isAlert: true,
-      confirmText: 'รับทราบ'
-    })
-  } finally {
-    loading.value.hide();
+  } else {
+    alertMessage('เกิดข้อผิดพลาดในการดึงข้อมูล');
   }
-  // currentView.value = 'IdCardInstructions'
 }
 </script>
 
@@ -156,7 +174,6 @@ const applyLoan = async () => {
       <FollowStatus v-else-if="currentView === 'FollowStatus'" @back="currentView = 'Home'" />
       <LoanCalculator v-else-if="currentView === 'LoanCalculator'" @back="currentView = 'Home'" />
       <UploadStatement v-else-if="currentView === 'UploadStatement'" @back="currentView = 'Home'" />
-      <AppMan :id="verificationId" v-else-if="currentView === 'AppMan'" @back="currentView = 'Home'" />
     </main>
 
     <AppDialog ref="confirm" />
